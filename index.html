@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dog Park Scavenger Hunt</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script defer src="app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Dog Park Scavenger Hunt 🐶</h1>
+    
+    <h3>Scan QR Code or Enter Manually</h3>
+    <div id="qr-reader" style="width: 300px;"></div>
+    <input type="text" id="qrInput" placeholder="Enter QR Code Manually">
+    <button onclick="submitQR()">Submit</button>
+
+    <p id="qrStatus"></p>
+
+    <div id="photoSection" style="display:none;">
+        <h3>Step 2: Upload a Photo</h3>
+        <input type="file" id="photoInput">
+        <button onclick="uploadPhoto()">Upload</button>
+        <p id="photoStatus"></p>
+    </div>
+
+    <div id="fbSection" style="display:none;">
+        <h3>Step 3: Post on Facebook</h3>
+        <button onclick="postToFacebook()">Post to Facebook</button>
+        <p id="fbStatus"></p>
+    </div>
+
+    <button id="nextClueBtn" style="display:none;" onclick="getNextClue()">Get Next Clue</button>
+
+</body>
+</html>
