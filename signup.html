@@ -43,7 +43,10 @@
           age,
           timestamp: serverTimestamp()
         });
-        window.location.href = "clue1.html"; // Redirect to first clue
+
+        // ✅ Redirect to Clue 1
+        window.location.href = "clue1.html";
+
       } catch (error) {
         alert("Error saving your info. Please try again.");
         console.error("Error writing to Firestore: ", error);
@@ -105,4 +108,3 @@
   </form>
 </body>
 </html>
-
