@@ -5,54 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sign Up - Dog Hunt</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
-  <script type="module">
-    // Firebase import + config
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDeTF1VT20rZEUz_46SqIWqcNAmFRyb-YA",
-      authDomain: "doghuntapp.firebaseapp.com",
-      projectId: "doghuntapp",
-      storageBucket: "doghuntapp.appspot.com",
-      messagingSenderId: "516842466897",
-      appId: "1:516842466897:web:78d992f9fad6c9d5ad1270"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    window.submitForm = async function(e) {
-      e.preventDefault();
-
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const breed = document.getElementById("breed").value.trim();
-      const age = document.getElementById("age").value.trim();
-
-      if (!name || !email) {
-        alert("Please enter your name and email.");
-        return;
-      }
-
-      try {
-        await addDoc(collection(db, "players"), {
-          name,
-          email,
-          breed,
-          age,
-          timestamp: serverTimestamp()
-        });
-
-        // ✅ Redirect to Clue 1
-        window.location.href = "clue1.html";
-
-      } catch (error) {
-        alert("Error saving your info. Please try again.");
-        console.error("Error writing to Firestore: ", error);
-      }
-    };
-  </script>
   <style>
     body {
       font-family: 'Roboto', sans-serif;
@@ -96,6 +48,54 @@
       margin-top: 1rem;
     }
   </style>
+
+  <!-- ✅ Firebase CDN Scripts (not module-based) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDeTF1VT20rZEUz_46SqIWqcNAmFRyb-YA",
+      authDomain: "doghuntapp.firebaseapp.com",
+      projectId: "doghuntapp",
+      storageBucket: "doghuntapp.appspot.com",
+      messagingSenderId: "516842466897",
+      appId: "1:516842466897:web:78d992f9fad6c9d5ad1270"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function submitForm(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const breed = document.getElementById("breed").value.trim();
+      const age = document.getElementById("age").value.trim();
+
+      if (!name || !email) {
+        alert("Please enter your name and email.");
+        return;
+      }
+
+      try {
+        await db.collection("players").add({
+          name,
+          email,
+          breed,
+          age,
+          timestamp: new Date()
+        });
+
+        window.location.href = "clue1.html";
+
+      } catch (error) {
+        alert("Something went wrong. Please try again.");
+        console.error("Error saving data: ", error);
+      }
+    }
+  </script>
 </head>
 <body>
   <h1>🐾 Join the Doggy Scavenger Hunt!</h1>
