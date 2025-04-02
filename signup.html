@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up - Dog Hunt</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #B359D9;
+      color: #fff;
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 {
+      font-family: 'Fredoka One', cursive;
+      color: #FFEB3B;
+      font-size: 2.2rem;
+      margin-top: 2rem;
+    }
+    p {
+      font-size: 1.2rem;
+      margin: 1rem auto 2rem;
+      max-width: 400px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    input {
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 1rem;
+    }
+    button {
+      padding: 0.8rem 2rem;
+      background-color: #FFEB3B;
+      color: #4A148C;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #FDD835;
+    }
+  </style>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDeTF1VT20rZEUz_46SqIWqcNAmFRyb-YA",
+    authDomain: "doghuntapp.firebaseapp.com",
+    projectId: "doghuntapp",
+    storageBucket: "doghuntapp.firebasestorage.app",
+    messagingSenderId: "516842466897",
+    appId: "1:516842466897:web:78d992f9fad6c9d5ad1270"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("signupForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const dogName = document.getElementById("dogName").value;
+      const breed = document.getElementById("breed").value;
+      const age = document.getElementById("age").value;
+
+      try {
+        await addDoc(collection(db, "signups"), {
+          name,
+          email,
+          dogName,
+          breed,
+          age,
+          timestamp: new Date().toISOString()
+        });
+        window.location.href = "clue1.html";
+      } catch (error) {
+        alert("Error submitting form. Please try again.");
+        console.error("Error adding document: ", error);
+      }
+    });
+  });
+</script>
+</head>
+<body>
+  <h1>Sign up HERE!</h1>
+  <p>To join The Dog Training School and Daycare Doggy Scavenger Hunt!</p>
+
+  <form id="signupForm">
+    <input type="text" id="name" placeholder="Your Name" required />
+    <input type="email" id="email" placeholder="Your Email" required />
+    <input type="text" id="dogName" placeholder="Dog's Name" required />
+    <input type="text" id="breed" placeholder="Dog's Breed" required />
+    <input type="number" id="age" placeholder="Dog's Age" required />
+    <button type="submit">Start the Hunt</button>
+  </form>
+</body>
+</html>
