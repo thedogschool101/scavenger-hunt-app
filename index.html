@@ -1,38 +1,84 @@
+<!--
+  © 2024 The Dog School 101
+  All rights reserved.
+  Do not copy, modify, or reuse this content without permission.
+  Website: https://thedogschool101.co.uk
+  Contact: info@thedogschool101.co.uk
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dog Park Scavenger Hunt</title>
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <script defer src="app.js"></script>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Dog School 101 - Dog Hunt App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #B359D9;
+      color: #fff;
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 {
+      font-family: 'Fredoka One', cursive;
+      color: #FFEB3B;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .btn {
+      padding: 1rem 2rem;
+      background-color: #FFEB3B;
+      color: #4A148C;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .btn:hover {
+      background-color: #FDD835;
+    }
+    footer {
+      margin-top: 4rem;
+      font-size: 0.9rem;
+      color: #eee;
+    }
+    a {
+      color: #FFEB3B;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .logo {
+      width: 120px;
+      margin-bottom: 1rem;
+    }
+  </style>
 </head>
 <body>
+  <img src="logo.png" alt="The Dog School 101 Logo" class="logo" />
+  <h1>🐾 Welcome to the Dog Hunt! 🐾</h1>
+  <p>Scan the QR code at each location to reveal your next clue.</p>
+  <button class="btn" onclick="startHunt()">Start the Hunt</button>
 
-    <h1>Dog Park Scavenger Hunt 🐶</h1>
-    
-    <h3>Scan QR Code or Enter Manually</h3>
-    <div id="qr-reader" style="width: 300px;"></div>
-    <input type="text" id="qrInput" placeholder="Enter QR Code Manually">
-    <button onclick="submitQR()">Submit</button>
+  <footer>
+    <p>Created by <strong>The Dog School 101</strong></p>
+    <p><a href="https://thedogschool101.co.uk">Visit Our Website</a> | Contact: info@thedogschool101.co.uk</p>
+  </footer>
 
-    <p id="qrStatus"></p>
-
-    <div id="photoSection" style="display:none;">
-        <h3>Step 2: Upload a Photo</h3>
-        <input type="file" id="photoInput">
-        <button onclick="uploadPhoto()">Upload</button>
-        <p id="photoStatus"></p>
-    </div>
-
-    <div id="fbSection" style="display:none;">
-        <h3>Step 3: Post on Facebook</h3>
-        <button onclick="postToFacebook()">Post to Facebook</button>
-        <p id="fbStatus"></p>
-    </div>
-
-    <button id="nextClueBtn" style="display:none;" onclick="getNextClue()">Get Next Clue</button>
-
+  <script>
+    function startHunt() {
+      // Future logic: redirect to first QR-based clue
+      window.location.href = "clue1.html";
+    }
+  </script>
 </body>
 </html>
