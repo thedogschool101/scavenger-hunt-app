@@ -43,13 +43,17 @@
       font-size: 0.9rem;
       color: #eee;
     }
+    #result {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <h1>🔐 Unlock Clue 3</h1>
   <div class="lock-box">
     <p>Enter the secret word you found at the last QR code location to continue!</p>
-    <input type="text" id="code" placeholder="Enter secret code" />
+    <input type="text" id="codeInput" placeholder="Enter secret code" />
     <br />
     <button onclick="checkCode()">Submit</button>
     <p id="result"></p>
@@ -60,6 +64,7 @@
     &copy; 2024 The Dog School 101. All rights reserved.
   </p>
 
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script>
@@ -76,23 +81,35 @@
     const db = firebase.firestore();
 
     async function checkCode() {
-      const code = document.getElementById("code").value.trim().toLowerCase();
-      if (code === "bridgepaw34") {
-        const email = localStorage.getItem("userEmail") || "unknown@anonymous.com";
-        try {
-          const snapshot = await db.collection("players").where("email", "==", email).get();
-          if (!snapshot.empty) {
-            const docRef = snapshot.docs[0].ref;
-            await docRef.update({ clue3_unlocked: new Date() });
-          }
-        } catch (err) {
-          console.error("Tracking error:", err);
-        }
-        window.location.href = "clue3.html";
-      } else {
+      const code = document.getElementById("codeInput").value.trim().toLowerCase();
+      const correct = "bridgepaw34";
+
+      if (code !== correct) {
         document.getElementById("result").textContent = "❌ Incorrect code. Try again.";
+        return;
+      }
+
+      const email = localStorage.getItem("userEmail");
+      if (!email || email === "unknown@anonymous.com") {
+        alert("Please sign up before unlocking clues.");
+        return;
+      }
+
+      try {
+        const snapshot = await db.collection("players").where("email", "==", email).get();
+        if (!snapshot.empty) {
+          await snapshot.docs[0].ref.update({ clue3_unlocked: new Date() });
+        }
+        document.getElementById("result").textContent = "✅ Code accepted! Loading...";
+        setTimeout(() => {
+          window.location.href = "clue3.html";
+        }, 1000);
+      } catch (err) {
+        console.error("Tracking error:", err);
+        document.getElementById("result").textContent = "⚠️ Tracking error. Try again later.";
       }
     }
   </script>
 </body>
 </html>
+
