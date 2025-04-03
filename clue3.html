@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clue 3 - Dog Hunt</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
   <style>
@@ -16,7 +16,7 @@
     h1 {
       font-family: 'Fredoka One', cursive;
       color: #FFEB3B;
-      font-size: 2.2rem;
+      font-size: 2.5rem;
       margin-bottom: 1rem;
     }
     .clue-box {
@@ -26,27 +26,35 @@
       border-radius: 12px;
       margin: 2rem auto;
       max-width: 500px;
-      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
     }
     .footer {
-      margin-top: 3rem;
+      margin-top: 2rem;
       font-size: 0.9rem;
       color: #eee;
     }
   </style>
 </head>
 <body>
-  <h1>🐾 Clue #3</h1>
+  <h1>🎉 You Unlocked Clue 3!</h1>
+
   <div class="clue-box">
     <p><strong>"Not the first, but further along,</strong><br>
-<strong>Past trees and birdsong’s cheerful song.</strong><br>
-<strong>A bench stands near a wooden gate,</strong><br>
-<strong>Your next clue’s there — don’t hesitate!"</strong></p>
+    <strong>Past trees and birdsong’s cheerful song.</strong><br>
+    <strong>A bench stands near a wooden gate,</strong><br>
+    <strong>Your next clue’s there — don’t hesitate!"</strong></p>
   </div>
 
   <p class="footer">
-    🕵️‍♀️ <strong>What to do next:</strong><br>
-    When you’ve solved the riddle and found the clue/QR code, use your phone’s camera to scan the QR code — that’s how you unlock the next clue!
+    🐾 When you've solved this riddle and found the next clue QR code, scan it with your phone to unlock Clue 4.
   </p>
+
+  <script>
+    // Optional personalization
+    const dogName = localStorage.getItem("dogName");
+    if (dogName) {
+      document.body.insertAdjacentHTML("afterbegin", `<p style="font-size: 1.1rem;">You're doing great, <strong>${dogName}</strong>! 🐶</p>`);
+    }
+  </script>
 </body>
 </html>
