@@ -69,20 +69,29 @@
     <h3>📢 Share the Fun!</h3>
     <p><strong>💡 Tip:</strong> Be sure you’re <u>logged into Facebook</u> in this browser before clicking share! If it doesn’t work, open this page in Chrome or Safari, not inside the FB or Instagram app.</p>
 
+    <!-- Copyable Caption -->
+    <div style="background: #f5f5f5; padding: 1rem; border-radius: 8px; color: #333; margin-bottom: 1rem;">
+      <p><strong>Suggested Caption:</strong></p>
+      <textarea id="copyCaption" style="width: 90%; padding: 0.5rem; font-size: 0.95rem; border-radius: 6px;" rows="3" readonly>
+I completed the Doggy Scavenger Hunt! 🐾 Join the fun with The Dog Training School and discover more tail-wagging activities! https://thedogschool101.github.io/scavenger-hunt-app/
+      </textarea>
+      <button onclick="copyToClipboard()" style="margin-top: 0.5rem; background-color: #4A148C; color: white;">📋 Copy Caption</button>
+    </div>
+
     <!-- Share to User's FB Page -->
     <a 
-      href="https://www.facebook.com/sharer/sharer.php?u=https://thedogschool101.github.io/scavenger-hunt-app/&quote=I completed the Doggy Scavenger Hunt! 🐾 Join the fun at The Dog Training School!" 
+      href="https://www.facebook.com/sharer/sharer.php?u=https://thedogschool101.github.io/scavenger-hunt-app/&quote=I completed the Doggy Scavenger Hunt! 🐾 Join the fun with The Dog Training School!" 
       target="_blank" 
       rel="noopener noreferrer">
-      <button class="social-btn">Share to My Facebook</button>
+      <button class="social-btn" style="font-size: 1.1rem;">📲 Share to My Facebook</button>
     </a>
 
     <!-- Share to Dog Training School Page -->
     <a href="https://www.facebook.com/DogTrainingSchool101" target="_blank">
-      <button class="social-btn">Post to The Dog School Page</button>
+      <button class="social-btn" style="background-color: #3b5998; font-size: 1.1rem;">📢 Post to The Dog School Page</button>
     </a>
 
-    <p>#DogHuntChamp • <a href="https://www.facebook.com/DogTrainingSchool101" target="_blank">@DogTrainingSchool101</a></p>
+    <p style="margin-top: 1rem;">Use hashtag <strong>#DogHuntChamp</strong> so we can find your post!</p>
   </div>
 
   <!-- Firebase Scripts -->
@@ -126,6 +135,14 @@
         console.error("Error saving entry:", error);
         document.getElementById("confirmation").innerText = "⚠️ There was a problem. Please try again.";
       }
+    }
+
+    function copyToClipboard() {
+      const textArea = document.getElementById("copyCaption");
+      textArea.select();
+      textArea.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      alert("📋 Caption copied! Now paste it in your Facebook post.");
     }
   </script>
 </body>
