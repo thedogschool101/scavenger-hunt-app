@@ -2,90 +2,74 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎉 You Did It!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Congratulations!</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Roboto', sans-serif;
-      background-color: #4A148C;
+      background-color: #B359D9;
       color: white;
       text-align: center;
       padding: 2rem;
     }
-    .card {
-      background: #fff;
+    .container {
+      background-color: #fff;
       color: #4A148C;
       padding: 2rem;
       border-radius: 10px;
-      max-width: 600px;
+      max-width: 500px;
       margin: 2rem auto;
     }
+    input, textarea {
+      width: 90%;
+      padding: 0.6rem;
+      margin: 0.5rem auto;
+      display: block;
+      border-radius: 6px;
+      border: none;
+    }
     button {
-      background-color: #B359D9;
+      padding: 0.6rem 1.2rem;
+      background-color: #4A148C;
       color: white;
       border: none;
-      padding: 0.8rem 1.5rem;
-      font-size: 1rem;
-      border-radius: 8px;
-      margin: 0.5rem;
+      border-radius: 6px;
       cursor: pointer;
+    }
+    .social-btn {
+      background-color: #4267B2;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>🎉 You Did It, Superstar!</h1>
-    <p>You've sniffed your way through every clue in the Dog School Scavenger Hunt! 🐶</p>
-    <p><strong>Want to win tasty treats?</strong> Share your achievement on Facebook:</p>
+  <h1>🎉 You’ve Completed the Hunt!</h1>
+  <div class="container">
+    <p>Well done! You've sniffed out every clue and reached the end.</p>
+    <p>Now it's your chance to win a prize!</p>
+    
+    <h3>📥 Enter Prize Draw</h3>
+    <input type="text" placeholder="Your Name" />
+    <input type="email" placeholder="Your Email" />
+    <textarea placeholder="Tell us your favourite clue or moment!"></textarea>
+    <button>Submit Entry</button>
 
-    <a href="https://www.facebook.com/sharer/sharer.php?u=https://thedogschool101.co.uk&quote=I’ve completed the Dog Hunt! 🐾 Join the fun, sniff out clues, and fetch some laughs! 🐕‍🦺 Check out everything The Dog Training School offers: https://thedogschool101.co.uk 🐾 Play the hunt: https://thedogschool101.github.io/scavenger-hunt-app #DogHuntComplete @DogTrainingSchool101" target="_blank">
-      <button>📣 Share to Your Timeline</button>
+    <h3>📢 Share the Fun!</h3>
+    <p>Let the world know you did it — and invite others to join the adventure!</p>
+
+    <!-- Share to User's FB Page -->
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https://thedogschool101.github.io/scavenger-hunt-app/&quote=I completed the Doggy Scavenger Hunt! 🐾 Join the fun at The Dog Training School!" target="_blank">
+      <button class="social-btn">Share to My Facebook</button>
     </a>
 
+    <!-- Share to Dog Training School Page -->
     <a href="https://www.facebook.com/DogTrainingSchool101" target="_blank">
-      <button>📸 Post to The Dog School 101 Page</button>
+      <button class="social-btn">Post to The Dog School Page</button>
     </a>
 
-    <p>Once you've posted, click below:</p>
-    <button onclick="confirmPosted()">✅ I’ve Posted My Photo!</button>
-
-    <div id="status"></div>
+    <p>#DogHuntChamp • <a href="https://www.facebook.com/DogTrainingSchool101" target="_blank">@DogTrainingSchool101</a></p>
   </div>
-
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDeTF1VT20rZEUz_46SqIWqcNAmFRyb-YA",
-      authDomain: "doghuntapp.firebaseapp.com",
-      projectId: "doghuntapp",
-      storageBucket: "doghuntapp.appspot.com",
-      messagingSenderId: "516842466897",
-      appId: "1:516842466897:web:78d992f9fad6c9d5ad1270"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    async function confirmPosted() {
-      const email = localStorage.getItem("userEmail") || "unknown@anonymous.com";
-      try {
-        const snapshot = await db.collection("players").where("email", "==", email).get();
-        if (!snapshot.empty) {
-          const docRef = snapshot.docs[0].ref;
-          await docRef.update({
-            finished: true,
-            finished_time: new Date(),
-            photo_shared_confirmed: true
-          });
-          document.getElementById("status").textContent = "🎉 You're entered into the prize draw! Good luck, tail-wagger!";
-        }
-      } catch (err) {
-        document.getElementById("status").textContent = "🐾 Woof! Something went wrong. Try again later.";
-        console.error("Firebase update failed:", err);
-      }
-    }
-  </script>
 </body>
 </html>
 
