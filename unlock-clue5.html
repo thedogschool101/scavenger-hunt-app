@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clue 5 Access</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #B359D9;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+    }
+    .lock-box {
+      background: #fff;
+      color: #4A148C;
+      padding: 2rem;
+      max-width: 400px;
+      margin: 2rem auto;
+      border-radius: 10px;
+    }
+    input {
+      padding: 0.5rem;
+      font-size: 1rem;
+      width: 80%;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      padding: 0.5rem 1.2rem;
+      font-size: 1rem;
+      color: #fff;
+      background-color: #4A148C;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .footer {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #eee;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 Unlock Clue 5</h1>
+  <div class="lock-box">
+    <p>Enter the secret word you found at the last QR code location to continue!</p>
+    <input type="text" id="code" placeholder="Enter secret code" />
+    <br />
+    <button onclick="checkCode()">Submit</button>
+    <p id="result"></p>
+  </div>
+
+  <p class="footer">
+    Hint: It's hidden with your last clue's QR code!<br>
+    &copy; 2024 The Dog School 101. All rights reserved.
+  </p>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDeTF1VT20rZEUz_46SqIWqcNAmFRyb-YA",
+      authDomain: "doghuntapp.firebaseapp.com",
+      projectId: "doghuntapp",
+      storageBucket: "doghuntapp.appspot.com",
+      messagingSenderId: "516842466897",
+      appId: "1:516842466897:web:78d992f9fad6c9d5ad1270"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function checkCode() {
+      const code = document.getElementById("code").value.trim().toLowerCase();
+      if (code === "mudtrail45") {
+        const email = localStorage.getItem("userEmail") || "unknown@anonymous.com";
+        try {
+          const snapshot = await db.collection("players").where("email", "==", email).get();
+          if (!snapshot.empty) {
+            const docRef = snapshot.docs[0].ref;
+            await docRef.update({ clue5_unlocked: new Date() });
+          }
+        } catch (err) {
+          console.error("Tracking error:", err);
+        }
+        window.location.href = "clue5.html";
+      } else {
+        document.getElementById("result").textContent = "❌ Incorrect code. Try again.";
+      }
+    }
+  </script>
+</body>
+</html>
