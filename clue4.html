@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clue 4 - Dog Hunt</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
   <style>
@@ -15,8 +15,8 @@
     }
     h1 {
       font-family: 'Fredoka One', cursive;
+      font-size: 2.5rem;
       color: #FFEB3B;
-      font-size: 2.2rem;
       margin-bottom: 1rem;
     }
     .clue-box {
@@ -26,17 +26,18 @@
       border-radius: 12px;
       margin: 2rem auto;
       max-width: 500px;
-      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
     }
     .footer {
-      margin-top: 3rem;
-      font-size: 0.9rem;
+      margin-top: 2rem;
+      font-size: 0.95rem;
       color: #eee;
     }
   </style>
 </head>
 <body>
-  <h1>🐾 Clue #4</h1>
+  <h1>🎉 You Unlocked Clue 4!</h1>
+
   <div class="clue-box">
     <p><strong>"It’s not a stick, though dogs might chew,</strong><br>
     <strong>A fallen giant with bark askew.</strong><br>
@@ -45,8 +46,15 @@
   </div>
 
   <p class="footer">
-    🕵️‍♀️ <strong>What to do next:</strong><br>
-    When you’ve solved the riddle and found the clue/QR code, use your phone’s camera to scan the QR code — that’s how you unlock the next clue!
+    🐾 When you've solved this riddle and found the next clue QR code, scan it with your phone to unlock Clue 5.
   </p>
+
+  <script>
+    // Optional personalization
+    const dogName = localStorage.getItem("dogName");
+    if (dogName) {
+      document.body.insertAdjacentHTML("afterbegin", `<p style="font-size: 1.1rem;">Great job, <strong>${dogName}</strong>! 🐶</p>`);
+    }
+  </script>
 </body>
 </html>
