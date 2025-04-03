@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clue 5 - Dog Hunt</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
   <style>
@@ -15,8 +15,8 @@
     }
     h1 {
       font-family: 'Fredoka One', cursive;
+      font-size: 2.5rem;
       color: #FFEB3B;
-      font-size: 2.2rem;
       margin-bottom: 1rem;
     }
     .clue-box {
@@ -26,27 +26,35 @@
       border-radius: 12px;
       margin: 2rem auto;
       max-width: 500px;
-      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
     }
     .footer {
-      margin-top: 3rem;
-      font-size: 0.9rem;
+      margin-top: 2rem;
+      font-size: 0.95rem;
       color: #eee;
     }
   </style>
 </head>
 <body>
-  <h1>🐾 Clue #5</h1>
+  <h1>🎉 You Unlocked Clue 5!</h1>
+
   <div class="clue-box">
     <p><strong>"One more bridge to cross with cheer,</strong><br>
-<strong>Beyond the trees and stream so clear.</strong><br>
-<strong>It’s not the first, you’ve passed that test,</strong><br>
-<strong>The second holds your final quest."</strong></p>
+    <strong>Beyond the trees and stream so clear.</strong><br>
+    <strong>It’s not the first, you’ve passed that test,</strong><br>
+    <strong>The second holds your final quest."</strong></p>
   </div>
 
   <p class="footer">
-    🕵️‍♀️ <strong>What to do next:</strong><br>
-    When you’ve solved the riddle and found the clue/QR code, use your phone’s camera to scan the QR code — that’s how you unlock the final page!
+    🐾 When you've solved this riddle and found the final QR code, scan it to unlock the end of your adventure!
   </p>
+
+  <script>
+    const dogName = localStorage.getItem("dogName");
+    if (dogName) {
+      document.body.insertAdjacentHTML("afterbegin", `<p style="font-size: 1.1rem;">Almost there, <strong>${dogName}</strong>! 🐶</p>`);
+    }
+  </script>
 </body>
 </html>
+
