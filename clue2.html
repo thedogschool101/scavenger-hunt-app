@@ -1,52 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clue 2 - Dog Hunt</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clue 2 Access</title>
   <style>
     body {
-      font-family: 'Roboto', sans-serif;
+      font-family: sans-serif;
       background-color: #B359D9;
-      color: #fff;
+      color: white;
       text-align: center;
       padding: 2rem;
     }
-    h1 {
-      font-family: 'Fredoka One', cursive;
-      color: #FFEB3B;
-      font-size: 2.2rem;
-      margin-bottom: 1rem;
-    }
-    .clue-box {
-      background-color: #fff;
+    .lock-box {
+      background: #fff;
       color: #4A148C;
-      padding: 1.5rem;
-      border-radius: 12px;
+      padding: 2rem;
+      max-width: 400px;
       margin: 2rem auto;
-      max-width: 500px;
-      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+      border-radius: 10px;
+    }
+    input {
+      padding: 0.5rem;
+      font-size: 1rem;
+      width: 80%;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      padding: 0.5rem 1.2rem;
+      font-size: 1rem;
+      color: #fff;
+      background-color: #4A148C;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
     }
     .footer {
-      margin-top: 3rem;
+      margin-top: 2rem;
       font-size: 0.9rem;
       color: #eee;
     }
   </style>
 </head>
 <body>
-  <h1>🐾 Clue #2</h1>
-  <div class="clue-box">
-    <p><strong>"Clickity-clack where paws may roam,</strong><br>
-    <strong>A wooden bridge not far from home.</strong><br>
-    <strong>With water below and trees above,</strong><br>
-    <strong>Your next clue waits where dogs would love."</strong></p>
+  <h1>🔐 Unlock Clue 2</h1>
+  <div class="lock-box">
+    <p>To continue the adventure, enter the secret word found at the last clue location.</p>
+    <input type="text" id="code" placeholder="Enter secret code" />
+    <br />
+    <button onclick="checkCode()">Submit</button>
+    <p id="result"></p>
   </div>
 
-  <p class="footer">
-    🕵️‍♀️ <strong>What to do next:</strong><br>
-    When you’ve solved the riddle and found the clue/QR code, use your phone’s camera to scan the QR code — that’s how you unlock the next clue!
-  </p>
+  <p class="footer">Hint: It's written next to the QR code you just scanned!</p>
+
+  <script>
+    function checkCode() {
+      const code = document.getElementById("code").value.trim().toLowerCase();
+      if (code === "pawprint12") {
+        window.location.href = "clue2.html";
+      } else {
+        document.getElementById("result").textContent = "❌ Incorrect code. Try again.";
+      }
+    }
+  </script>
 </body>
 </html>
