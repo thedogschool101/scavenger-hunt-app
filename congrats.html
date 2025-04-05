@@ -2,100 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Congratulations!</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Roboto', sans-serif;
-      background-color: #B359D9;
-      color: white;
+      background-color: #B2DFDB;
       text-align: center;
       padding: 2rem;
     }
-    .container {
-      background-color: #fff;
-      color: #4A148C;
-      padding: 2rem;
-      border-radius: 10px;
-      max-width: 500px;
-      margin: 2rem auto;
+    h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 3rem;
+      color: #004D40;
     }
-    input, textarea {
-      width: 90%;
-      padding: 0.6rem;
-      margin: 0.5rem auto;
-      display: block;
-      border-radius: 6px;
-      border: none;
-      font-size: 1rem;
-    }
-    input:disabled {
-      background-color: #eee;
-    }
-    button {
-      padding: 0.6rem 1.2rem;
-      background-color: #4A148C;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-    #confirmation {
-      font-weight: bold;
-      color: green;
-      margin-top: 1rem;
-    }
-    #downloadLink {
-      display: none;
-      margin-top: 1rem;
-    }
-    .checkbox {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
+    p {
+      font-size: 1.2rem;
+      color: #00695C;
+      margin-bottom: 2rem;
     }
   </style>
-</head>
-<body>
-  <h1>🎉 You’ve Completed the Hunt!</h1>
-  <div class="container">
-    <p>Well done! You've sniffed out every clue and reached the end.</p>
-    <p>You're already entered into the main prize draw based on your completion time.</p>
-
-    <h3>📥 Enter Bonus Prize Draw</h3>
-    <p>Want to win bonus treats? Tell us more and upload a photo of your adventure!</p>
-
-    <form onsubmit="submitEntry(event)">
-      <input id="name" type="text" placeholder="Your Name" required disabled />
-      <input id="email" type="email" placeholder="Your Email" required disabled />
-      <input id="phone" type="text" placeholder="Phone Number (optional)" disabled />
-
-      <input id="facebook" type="text" placeholder="Facebook Profile Name (required unless not on FB)" required />
-      <div class="checkbox">
-        <input type="checkbox" id="noFacebook" onchange="toggleFacebookField()" />
-        <label for="noFacebook">I'm not on Facebook</label>
-      </div>
-
-      <textarea id="moment" placeholder="Tell us your favourite clue or moment!" required></textarea>
-      <textarea id="comment" placeholder="Any extra comment you'd like us to include with your photo? (optional)"></textarea>
-
-      <label for="photo">📸 Take a Photo (Required)</label>
-      <input type="file" id="photo" accept="image/*" capture="environment" required />
-
-      <button type="submit">Submit Entry</button>
-      <p id="confirmation"></p>
-    </form>
-
-    <a id="downloadLink" href="#" download>⬇️ Download Your Photo</a>
-  </div>
-
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDeTF1VT20rZEUz_46SqIWqcNAmFRyb-YA",
@@ -107,95 +36,37 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const storage = firebase.storage();
 
-    window.onload = () => {
-      document.getElementById("name").value = localStorage.getItem("userName") || "";
-      document.getElementById("email").value = localStorage.getItem("userEmail") || "";
-      document.getElementById("phone").value = localStorage.getItem("userPhone") || "";
-    };
+    async function markCompleted() {
+      const name = localStorage.getItem("userName");
+      const email = localStorage.getItem("userEmail");
 
-    function toggleFacebookField() {
-      const checkbox = document.getElementById("noFacebook");
-      const fbField = document.getElementById("facebook");
-      if (checkbox.checked) {
-        fbField.disabled = true;
-        fbField.required = false;
-        fbField.value = "Not on Facebook";
-      } else {
-        fbField.disabled = false;
-        fbField.required = true;
-        fbField.value = "";
-      }
-    }
-
-    async function submitEntry(event) {
-      event.preventDefault();
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const facebook = document.getElementById("facebook").value.trim();
-      const moment = document.getElementById("moment").value.trim();
-      const comment = document.getElementById("comment").value.trim();
-      const photoFile = document.getElementById("photo").files[0];
-
-      if (!name || !email || !moment || !photoFile) {
-        alert("Please fill in all required fields and take a photo.");
-        return;
-      }
+      if (!name || !email) return;
 
       try {
-        const storageRef = storage.ref(`prize_photos/${Date.now()}_${photoFile.name}`);
-        const uploadTask = await storageRef.put(photoFile);
-        const photoURL = await uploadTask.ref.getDownloadURL();
+        const snapshot = await db.collection("players")
+          .where("name", "==", name)
+          .where("email", "==", email)
+          .limit(1)
+          .get();
 
-        await db.collection("prize_entries").add({
-          name,
-          email,
-          phone,
-          facebook,
-          moment,
-          comment,
-          photoURL,
-          submitted_at: new Date()
-        });
-
-        document.getElementById("confirmation").innerText = "✅ Thanks! You're entered into the prize draw!";
-        document.getElementById("downloadLink").href = photoURL;
-        document.getElementById("downloadLink").style.display = 'inline-block';
-        event.target.reset();
+        if (!snapshot.empty) {
+          const docRef = snapshot.docs[0].ref;
+          await docRef.update({
+            completed_time: new Date()
+          });
+          console.log("🏁 Completion time recorded.");
+        }
       } catch (error) {
-        console.error("Error saving entry:", error);
-        document.getElementById("confirmation").innerText = "⚠️ There was a problem. Please try again.";
-      }
-    }
-  </script>
-</body>
-</html>
-
-      try {
-        await db.collection("prize_entries").add({
-          name,
-          email,
-          phone,
-          moment,
-          submitted_at: new Date()
-        });
-        document.getElementById("confirmation").innerText = "✅ Thanks! You're entered into the prize draw!";
-        event.target.reset();
-      } catch (error) {
-        console.error("Error saving entry:", error);
-        document.getElementById("confirmation").innerText = "⚠️ There was a problem. Please try again.";
+        console.error("Error marking completion:", error);
       }
     }
 
-    function copyToClipboard() {
-      const textArea = document.getElementById("copyCaption");
-      textArea.select();
-      textArea.setSelectionRange(0, 99999);
-      document.execCommand("copy");
-      alert("📋 Caption copied! Now paste it in your Facebook post.");
-    }
+    window.onload = markCompleted;
   </script>
+</head>
+<body>
+  <h1>🎉 You Did It!</h1>
+  <p>You've completed the Dog Hunt adventure! You're officially a Top Dog! 🐾</p>
 </body>
 </html>
