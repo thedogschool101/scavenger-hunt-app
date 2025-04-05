@@ -100,8 +100,9 @@
         });
 
       players.sort((a, b) => a.durationMs - b.durationMs); // Fastest first
+      const top3 = players.slice(0, 3);
 
-      players.forEach((player, index) => {
+      top3.forEach((player, index) => {
         const div = document.createElement("div");
         div.className = "player";
 
@@ -118,7 +119,7 @@
             </div>
           </div>
           <div>
-            ${medal ? `<span class="medal">${medal}</span>` : ''}
+            <span class="medal">${medal}</span>
           </div>
         `;
         container.appendChild(div);
@@ -129,8 +130,6 @@
   </script>
 </head>
 <body>
-  <h1>🏆 The Top Doggos!</h1>
-  <div id="leaderboard" class="leaderboard"></div>
-</body>
-</html>
+  <h1>🏆 Top 3 Doggos!</
+
 
