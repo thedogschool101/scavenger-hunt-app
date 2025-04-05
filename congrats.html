@@ -34,6 +34,7 @@
       display: flex;
       align-items: center;
       margin: 1.5rem 0;
+      position: relative;
     }
     .bar img {
       width: 50px;
@@ -64,6 +65,20 @@
     .gold { background-color: gold; }
     .silver { background-color: silver; }
     .bronze { background-color: #cd7f32; }
+    .medal {
+      position: absolute;
+      right: -40px;
+      font-size: 2rem;
+      animation: popIn 0.5s ease forwards;
+      transform: scale(0);
+    }
+    .gold-medal { color: gold; animation-delay: 0.2s; }
+    .silver-medal { color: silver; animation-delay: 0.4s; }
+    .bronze-medal { color: #cd7f32; animation-delay: 0.6s; }
+
+    @keyframes popIn {
+      to { transform: scale(1); }
+    }
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -129,10 +144,14 @@
         const bar = document.createElement("div");
         bar.className = "bar";
 
-        const medalClass = index === 0 ? "gold" : index === 1 ? "silver" : "bronze";
-        const width = Math.max((1 - p.duration / max) * 100 + 10, 20);
+        const medal = index === 0 ? "🥇" :
+                      index === 1 ? "🥈" : "🥉";
+        const medalClass = index === 0 ? "gold" :
+                           index === 1 ? "silver" : "bronze";
 
+        const width = Math.max((1 - p.duration / max) * 100 + 10, 20);
         const barId = `bar${index}`;
+
         bar.innerHTML = `
           <img src="${p.avatar}" alt="dog avatar" />
           <div class="bar-info">
@@ -140,11 +159,12 @@
             <div class="bar-time">${p.timeText}</div>
             <div id="${barId}" class="bar-fill ${medalClass}"></div>
           </div>
+          <div class="medal ${medalClass}-medal">${medal}</div>
         `;
         container.appendChild(bar);
 
         setTimeout(() => {
-          document.getElementById(barId).style.width = `${width}%`;
+          document.getElementById(barId).style.width = \`\${width}%\`;
         }, 300);
       });
     }
@@ -153,21 +173,28 @@
       const secs = Math.floor(ms / 1000);
       const min = Math.floor(secs / 60);
       const sec = secs % 60;
-      return `${min}m ${sec}s`;
+      return \`\${min}m \${sec}s\`;
     }
 
     function launchConfetti() {
       confetti({
         particleCount: 150,
-        spread: 80,
+        spread: 90,
         origin: { y: 0.6 }
       });
+    }
+
+    function playBark() {
+      const audio = new Audio("https://www.fesliyanstudios.com/play-mp3/387");
+      audio.volume = 0.7;
+      audio.play();
     }
 
     window.onload = () => {
       markCompleted();
       loadTop3();
       launchConfetti();
+      playBark();
     };
   </script>
 </head>
@@ -180,5 +207,4 @@
   </div>
 </body>
 </html>
-
 
