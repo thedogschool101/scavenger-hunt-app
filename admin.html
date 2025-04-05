@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel - Dog Hunt</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #E3F2FD;
+      color: #0D47A1;
+      padding: 2rem;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    table {
+      margin: 1rem auto;
+      width: 95%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #BBDEFB;
+      padding: 0.5rem;
+      font-size: 0.9rem;
+    }
+    th {
+      background-color: #BBDEFB;
+    }
+    img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    button {
+      margin: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .winner {
+      font-size: 1.2rem;
+      color: green;
+      margin-top: 1rem;
+    }
+  </style>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDeTF1VT20rZEUz_46SqIWqcNAmFRyb-YA",
+      authDomain: "doghuntapp.firebaseapp.com",
+      projectId: "doghuntapp",
+      storageBucket: "doghuntapp.appspot.com",
+      messagingSenderId: "516842466897",
+      appId: "1:516842466897:web:78d992f9fad6c9d5ad1270"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const ADMIN_PASSWORD = "dogboss2024";
+
+    async function loadData() {
+      const tableBody = document.getElementById("playerTable");
+      const snapshot = await db.collection("players").get();
+
+      const players = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(p => p.completed_time && p.signup_time);
+
+      players.forEach((player, i) => {
+        const tr = document.createElement("tr");
+        const signup = player.signup_time.toDate().toLocaleString();
+        const complete = player.completed_time.toDate().toLocaleString();
+        tr.innerHTML = `
+          <td>${i + 1}</td>
+          <td>${player.name || ''}</td>
+          <td>${player.dogname || ''}</td>
+          <td>${player.email || ''}</td>
+          <td>${player.phone || ''}</td>
+          <td><img src="${player.avatar}" /></td>
+          <td>${signup}</td>
+          <td>${complete}</td>
+        `;
+        tableBody.appendChild(tr);
+      });
+
+      window.playerData = players; // Store globally for CSV/winner
+    }
+
+    function exportCSV() {
+      const headers = ["Name", "Dog Name", "Email", "Phone", "Signup Time", "Completed Time"];
+      const rows = window.playerData.map(p => [
+        `"${p.name || ''}"`,
+        `"${p.dogname || ''}"`,
+        `"${p.email || ''}"`,
+        `"${p.phone || ''}"`,
+        `"${p.signup_time.toDate().toLocaleString()}"`,
+        `"${p.completed_time.toDate().toLocaleString()}"`
+      ]);
+      const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "completed_players.csv";
+      link.click();
+    }
+
+    function pickWinner() {
+      if (!window.playerData || window.playerData.length === 0) {
+        alert("No finished players found.");
+        return;
+      }
+      const winner = window.playerData[Math.floor(Math.random() * window.playerData.length)];
+      document.getElementById("winnerDisplay").innerHTML =
+        `🎉 Winner: <strong>${winner.name}</strong> with dog <strong>${winner.dogname}</strong>`;
+    }
+
+    function checkPassword() {
+      const input = prompt("Enter admin password:");
+      if (input !== ADMIN_PASSWORD) {
+        alert("Access denied.");
+        document.body.innerHTML = "<h2>Unauthorized Access</h2>";
+      } else {
+        loadData();
+      }
+    }
+
+    window.onload = checkPassword;
+  </script>
+</head>
+<body>
+  <h1>🎁 Dog Hunt Admin Panel</h1>
+  <button onclick="exportCSV()">⬇️ Download CSV</button>
+  <button onclick="pickWinner()">🎲 Pick Random Winner</button>
+  <div class="winner" id="winnerDisplay"></div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Player</th>
+        <th>Dog</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Avatar</th>
+        <th>Signed Up</th>
+        <th>Finished</th>
+      </tr>
+    </thead>
+    <tbody id="playerTable"></tbody>
+  </table>
+</body>
+</html>
