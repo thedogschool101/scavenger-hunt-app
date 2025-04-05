@@ -8,21 +8,59 @@
   <style>
     body {
       font-family: 'Roboto', sans-serif;
-      background-color: #B2DFDB;
+      background-color: #B359D9;
+      color: #fff;
       text-align: center;
       padding: 2rem;
     }
     h1 {
       font-family: 'Fredoka One', cursive;
       font-size: 3rem;
-      color: #004D40;
+      color: #FFEB3B;
     }
-    p {
-      font-size: 1.2rem;
-      color: #00695C;
-      margin-bottom: 2rem;
+    .bar-container {
+      margin-top: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 1rem;
+      color: #4A148C;
     }
+    .bar {
+      display: flex;
+      align-items: center;
+      margin: 1rem 0;
+    }
+    .bar img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 1rem;
+    }
+    .bar-info {
+      flex-grow: 1;
+    }
+    .bar-name {
+      font-weight: bold;
+    }
+    .bar-time {
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .bar-fill {
+      height: 16px;
+      background: #B359D9;
+      border-radius: 8px;
+      margin-top: 5px;
+    }
+    .gold { background-color: gold; }
+    .silver { background-color: silver; }
+    .bronze { background-color: #cd7f32; }
   </style>
+
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script>
@@ -32,41 +70,4 @@
       projectId: "doghuntapp",
       storageBucket: "doghuntapp.appspot.com",
       messagingSenderId: "516842466897",
-      appId: "1:516842466897:web:78d992f9fad6c9d5ad1270"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    async function markCompleted() {
-      const name = localStorage.getItem("userName");
-      const email = localStorage.getItem("userEmail");
-
-      if (!name || !email) return;
-
-      try {
-        const snapshot = await db.collection("players")
-          .where("name", "==", name)
-          .where("email", "==", email)
-          .limit(1)
-          .get();
-
-        if (!snapshot.empty) {
-          const docRef = snapshot.docs[0].ref;
-          await docRef.update({
-            completed_time: new Date()
-          });
-          console.log("🏁 Completion time recorded.");
-        }
-      } catch (error) {
-        console.error("Error marking completion:", error);
-      }
-    }
-
-    window.onload = markCompleted;
-  </script>
-</head>
-<body>
-  <h1>🎉 You Did It!</h1>
-  <p>You've completed the Dog Hunt adventure! You're officially a Top Dog! 🐾</p>
-</body>
-</html>
+      appId: "1
