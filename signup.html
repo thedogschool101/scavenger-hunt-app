@@ -27,7 +27,7 @@
       margin: 2rem auto;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
-    input, select {
+    input {
       display: block;
       margin: 1rem auto;
       padding: 0.7rem;
@@ -36,143 +36,64 @@
       border: none;
       font-size: 1rem;
     }
-    button {
+    .funny-button {
       background-color: #FFEB3B;
-      border: none;
-      border-radius: 6px;
-      padding: 0.7rem 1.5rem;
-      font-size: 1rem;
-      font-weight: bold;
       color: #4A148C;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      padding: 1rem 2rem;
       cursor: pointer;
+      transition: transform 0.2s;
       margin-top: 1rem;
     }
-    .avatar-option {
-      width: 70px;
-      height: 70px;
-      object-fit: cover;
-      border: 3px solid transparent;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: transform 0.2s, border-color 0.2s;
+    .funny-button:hover {
+      transform: scale(1.05);
     }
-    .avatar-option:hover {
-      transform: scale(1.1);
-    }
-    .avatar-option.selected {
-      border-color: #FFEB3B;
-    }
-    #avatarGrid {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin: 1rem auto;
+    .small-text {
+      font-size: 0.9rem;
+      color: #888;
+      margin-top: 0.5rem;
     }
   </style>
-
-  <!-- Firebase Scripts -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDeTF1VT20rZEUz_46SqIWqcNAmFRyb-YA",
-      authDomain: "doghuntapp.firebaseapp.com",
-      projectId: "doghuntapp",
-      storageBucket: "doghuntapp.appspot.com",
-      messagingSenderId: "516842466897",
-      appId: "1:516842466897:web:78d992f9fad6c9d5ad1270"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const storage = firebase.storage();
-
-    async function submitForm(e) {
-      e.preventDefault();
-
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const dogname = document.getElementById("dogname").value.trim();
-      const breed = document.getElementById("breed").value.trim();
-      const age = document.getElementById("age").value.trim();
-      const avatarText = document.getElementById("avatarSelect").value;
-      const avatarPhotoFile = document.getElementById("avatarPhoto").files[0];
-
-      if (!name || !email || !dogname || !breed || !age) {
-        alert("Please fill in all required fields.");
-        return;
-      }
-
-      localStorage.setItem("userName", name);
-      localStorage.setItem("userEmail", email);
-      localStorage.setItem("userPhone", phone);
-
-      let avatarURL = avatarText;
-
-      try {
-        if (avatarPhotoFile) {
-          const photoRef = storage.ref(`avatars/${Date.now()}_${avatarPhotoFile.name}`);
-          const uploadTask = await photoRef.put(avatarPhotoFile);
-          avatarURL = await uploadTask.ref.getDownloadURL();
-        }
-
-        await db.collection("players").add({
-          name,
-          email,
-          phone,
-          dogname,
-          breed,
-          age,
-          avatar: avatarURL,
-          signup_time: new Date()
-        });
-
-        window.location.href = "clue1.html";
-      } catch (error) {
-        console.error("Error saving data: ", error);
-        alert("Something went wrong. Please try again.");
-      }
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll('.avatar-option').forEach(img => {
-        img.addEventListener('click', () => {
-          document.querySelectorAll('.avatar-option').forEach(i => i.classList.remove('selected'));
-          img.classList.add('selected');
-          document.getElementById('avatarSelect').value = img.dataset.avatar;
-        });
-      });
-    });
-  </script>
 </head>
 <body>
   <h1>🐾 Join the Doggy Scavenger Hunt!</h1>
-  <form onsubmit="submitForm(event)">
+  <form onsubmit="submitSignup(event)">
     <input id="name" type="text" placeholder="Your Name" required />
     <input id="email" type="email" placeholder="Your Email" required />
     <input id="phone" type="text" placeholder="Phone Number (optional)" />
     <input id="dogname" type="text" placeholder="Dog's Name" required />
     <input id="breed" type="text" placeholder="Dog's Breed" required />
     <input id="age" type="text" placeholder="Dog's Age" required />
-
-    <label>🐶 Choose a Dog Avatar (or upload your own)</label>
-    <div id="avatarGrid">
-      <img src="avatars/nap-ninja.png" alt="Nap Ninja" class="avatar-option" data-avatar="avatars/nap-ninja.png" />
-      <img src="avatars/zoomie-mcfluff.png" alt="Zoomie McFluff" class="avatar-option" data-avatar="avatars/zoomie-mcfluff.png" />
-      <img src="avatars/princess-chewbone.png" alt="Princess Chewbone" class="avatar-option" data-avatar="avatars/princess-chewbone.png" />
-      <img src="avatars/barketing-manager.png" alt="Barketing Manager" class="avatar-option" data-avatar="avatars/barketing-manager.png" />
-      <img src="avatars/bellyrub-bandit.png" alt="Bellyrub Bandit" class="avatar-option" data-avatar="avatars/bellyrub-bandit.png" />
-    </div>
-    <input type="hidden" id="avatarSelect" />
-
-    <label for="avatarPhoto">📸 Or Upload a Dog Avatar Photo</label>
-    <input type="file" id="avatarPhoto" name="avatarPhoto" accept="image/*" style="margin-bottom: 1rem;" />
-
-    <button type="submit">Start Hunt</button>
+    <button class="funny-button" type="submit">
+      🐶 Let's Pick Your Pupsona!
+    </button>
+    <div class="small-text">(Choose a cartoon dog avatar or upload your furry friend!)</div>
   </form>
+
+  <script>
+    function submitSignup(e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const dogname = document.getElementById("dogname").value.trim();
+      const breed = document.getElementById("breed").value.trim();
+      const age = document.getElementById("age").value.trim();
+
+      localStorage.setItem("userName", name);
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userPhone", phone);
+      localStorage.setItem("dogname", dogname);
+      localStorage.setItem("breed", breed);
+      localStorage.setItem("age", age);
+
+      window.location.href = "choose-avatar.html";
+    }
+  </script>
 </body>
 </html>
+
 
