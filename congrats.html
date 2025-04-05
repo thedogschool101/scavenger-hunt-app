@@ -70,4 +70,95 @@
       projectId: "doghuntapp",
       storageBucket: "doghuntapp.appspot.com",
       messagingSenderId: "516842466897",
-      appId: "1
+      appId: "1:516842466897:web:78d992f9fad6c9d5ad1270"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function markCompleted() {
+      const name = localStorage.getItem("userName");
+      const email = localStorage.getItem("userEmail");
+
+      if (!name || !email) return;
+
+      try {
+        const snapshot = await db.collection("players")
+          .where("name", "==", name)
+          .where("email", "==", email)
+          .limit(1)
+          .get();
+
+        if (!snapshot.empty) {
+          const docRef = snapshot.docs[0].ref;
+          await docRef.update({ completed_time: new Date() });
+        }
+      } catch (error) {
+        console.error("Error saving completion time:", error);
+      }
+    }
+
+    async function loadTop3() {
+      const container = document.getElementById("top3");
+      const snapshot = await db.collection("players").get();
+
+      const players = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(p => p.completed_time && p.signup_time)
+        .map(p => {
+          const start = p.signup_time.toDate?.();
+          const end = p.completed_time.toDate?.();
+          const durationMs = end - start;
+          return {
+            avatar: p.avatar,
+            dogname: p.dogname,
+            duration: durationMs,
+            timeText: formatDuration(durationMs)
+          };
+        });
+
+      players.sort((a, b) => a.duration - b.duration);
+      const top3 = players.slice(0, 3);
+      const max = top3[2]?.duration || 1;
+
+      top3.forEach((p, index) => {
+        const bar = document.createElement("div");
+        bar.className = "bar";
+
+        const medalClass = index === 0 ? "gold" : index === 1 ? "silver" : "bronze";
+        const width = Math.max((1 - p.duration / max) * 100 + 10, 20); // Shorter time = longer bar
+
+        bar.innerHTML = `
+          <img src="${p.avatar}" alt="dog avatar" />
+          <div class="bar-info">
+            <div class="bar-name">${p.dogname}</div>
+            <div class="bar-time">${p.timeText}</div>
+            <div class="bar-fill ${medalClass}" style="width: ${width}%;"></div>
+          </div>
+        `;
+        container.appendChild(bar);
+      });
+    }
+
+    function formatDuration(ms) {
+      const secs = Math.floor(ms / 1000);
+      const min = Math.floor(secs / 60);
+      const sec = secs % 60;
+      return `${min}m ${sec}s`;
+    }
+
+    window.onload = () => {
+      markCompleted();
+      loadTop3();
+    };
+  </script>
+</head>
+<body>
+  <h1>🎉 You Did It!</h1>
+  <p>You're officially a Top Dog! Here's how the best sniffers ranked:</p>
+
+  <div class="bar-container" id="top3">
+    <!-- Bar chart will be injected here -->
+  </div>
+</body>
+</html>
+
