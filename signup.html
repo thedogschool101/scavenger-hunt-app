@@ -47,6 +47,28 @@
       cursor: pointer;
       margin-top: 1rem;
     }
+    .avatar-option {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border: 3px solid transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .avatar-option:hover {
+      transform: scale(1.1);
+    }
+    .avatar-option.selected {
+      border-color: #FFEB3B;
+    }
+    #avatarGrid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 1rem auto;
+    }
   </style>
 
   <!-- Firebase Scripts -->
@@ -84,7 +106,6 @@
         return;
       }
 
-      // Save basic info to localStorage for future pages
       localStorage.setItem("userName", name);
       localStorage.setItem("userEmail", email);
       localStorage.setItem("userPhone", phone);
@@ -92,7 +113,6 @@
       let avatarURL = avatarText;
 
       try {
-        // If they uploaded a photo, store it in Firebase Storage
         if (avatarPhotoFile) {
           const photoRef = storage.ref(`avatars/${Date.now()}_${avatarPhotoFile.name}`);
           const uploadTask = await photoRef.put(avatarPhotoFile);
@@ -116,6 +136,16 @@
         alert("Something went wrong. Please try again.");
       }
     }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll('.avatar-option').forEach(img => {
+        img.addEventListener('click', () => {
+          document.querySelectorAll('.avatar-option').forEach(i => i.classList.remove('selected'));
+          img.classList.add('selected');
+          document.getElementById('avatarSelect').value = img.dataset.avatar;
+        });
+      });
+    });
   </script>
 </head>
 <body>
@@ -128,16 +158,15 @@
     <input id="breed" type="text" placeholder="Dog's Breed" required />
     <input id="age" type="text" placeholder="Dog's Age" required />
 
-    <label for="avatarSelect">🐶 Choose a Dog Avatar (or upload your own)</label>
-    <select id="avatarSelect" name="avatarSelect">
-      <option value="">-- Select a Dog Avatar --</option>
-      <option value="🐶 Mutt">🐶 Mutt</option>
-      <option value="🐕 Lil Giant">🐕 Lil Giant</option>
-      <option value="🦴 Crazy Critter">🦴 Crazy Critter</option>
-      <option value="🐾 Sniffer Champ">🐾 Sniffer Champ</option>
-      <option value="💨 Zoomie Beast">💨 Zoomie Beast</option>
-      <option value="🎤 Howlin' Pal">🎤 Howlin' Pal</option>
-    </select>
+    <label>🐶 Choose a Dog Avatar (or upload your own)</label>
+    <div id="avatarGrid">
+      <img src="avatars/nap-ninja.png" alt="Nap Ninja" class="avatar-option" data-avatar="avatars/nap-ninja.png" />
+      <img src="avatars/zoomie-mcfluff.png" alt="Zoomie McFluff" class="avatar-option" data-avatar="avatars/zoomie-mcfluff.png" />
+      <img src="avatars/princess-chewbone.png" alt="Princess Chewbone" class="avatar-option" data-avatar="avatars/princess-chewbone.png" />
+      <img src="avatars/barketing-manager.png" alt="Barketing Manager" class="avatar-option" data-avatar="avatars/barketing-manager.png" />
+      <img src="avatars/bellyrub-bandit.png" alt="Bellyrub Bandit" class="avatar-option" data-avatar="avatars/bellyrub-bandit.png" />
+    </div>
+    <input type="hidden" id="avatarSelect" />
 
     <label for="avatarPhoto">📸 Or Upload a Dog Avatar Photo</label>
     <input type="file" id="avatarPhoto" name="avatarPhoto" accept="image/*" style="margin-bottom: 1rem;" />
