@@ -87,11 +87,11 @@
 
       const players = snapshot.docs
         .map(doc => ({ id: doc.id, ...doc.data() }))
-        .filter(p => p.completed_time) // Only finished players
+        .filter(p => p.completed_time && p.signup_time)
         .map(p => {
-          const signup = p.signup_time?.toDate?.();
-          const completed = p.completed_time?.toDate?.();
-          const durationMs = completed - signup;
+          const start = p.signup_time.toDate?.();
+          const end = p.completed_time.toDate?.();
+          const durationMs = end - start;
           return {
             ...p,
             duration: formatDuration(durationMs),
@@ -133,4 +133,5 @@
   <div id="leaderboard" class="leaderboard"></div>
 </body>
 </html>
+
 
