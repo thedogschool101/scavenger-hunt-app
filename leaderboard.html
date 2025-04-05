@@ -54,6 +54,10 @@
     .gold { color: gold; }
     .silver { color: silver; }
     .bronze { color: #cd7f32; }
+    .duration {
+      font-size: 0.9rem;
+      color: #777;
+    }
   </style>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -69,18 +73,33 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    function formatDuration(ms) {
+      const seconds = Math.floor(ms / 1000);
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins}m ${secs}s`;
+    }
+
     async function loadLeaderboard() {
       const container = document.getElementById("leaderboard");
 
-      const snapshot = await db.collection("players").orderBy("signup_time").get();
+      const snapshot = await db.collection("players").get();
 
-      const players = snapshot.docs.map(doc => ({
-        ...doc.data(),
-        time: doc.data().signup_time?.toDate?.() || new Date()
-      }));
+      const players = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(p => p.completed_time) // Only finished players
+        .map(p => {
+          const signup = p.signup_time?.toDate?.();
+          const completed = p.completed_time?.toDate?.();
+          const durationMs = completed - signup;
+          return {
+            ...p,
+            duration: formatDuration(durationMs),
+            durationMs
+          };
+        });
 
-      // Sort by fastest (or modify as needed)
-      players.sort((a, b) => a.time - b.time);
+      players.sort((a, b) => a.durationMs - b.durationMs); // Fastest first
 
       players.forEach((player, index) => {
         const div = document.createElement("div");
@@ -95,7 +114,7 @@
             <img src="${player.avatar || 'avatars/default.png'}" alt="avatar" />
             <div>
               <strong>${player.name}</strong><br>
-              <small>${player.dogname || ''}</small>
+              <div class="duration">${player.duration}</div>
             </div>
           </div>
           <div>
@@ -114,3 +133,4 @@
   <div id="leaderboard" class="leaderboard"></div>
 </body>
 </html>
+
