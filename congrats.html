@@ -5,6 +5,7 @@
   <title>Congratulations!</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     body {
       font-family: 'Roboto', sans-serif;
@@ -12,6 +13,7 @@
       color: #fff;
       text-align: center;
       padding: 2rem;
+      overflow-x: hidden;
     }
     h1 {
       font-family: 'Fredoka One', cursive;
@@ -31,7 +33,7 @@
     .bar {
       display: flex;
       align-items: center;
-      margin: 1rem 0;
+      margin: 1.5rem 0;
     }
     .bar img {
       width: 50px;
@@ -45,6 +47,7 @@
     }
     .bar-name {
       font-weight: bold;
+      font-size: 1.1rem;
     }
     .bar-time {
       font-size: 0.9rem;
@@ -55,6 +58,8 @@
       background: #B359D9;
       border-radius: 8px;
       margin-top: 5px;
+      width: 0%;
+      transition: width 1.2s ease-out;
     }
     .gold { background-color: gold; }
     .silver { background-color: silver; }
@@ -125,17 +130,22 @@
         bar.className = "bar";
 
         const medalClass = index === 0 ? "gold" : index === 1 ? "silver" : "bronze";
-        const width = Math.max((1 - p.duration / max) * 100 + 10, 20); // Shorter time = longer bar
+        const width = Math.max((1 - p.duration / max) * 100 + 10, 20);
 
+        const barId = `bar${index}`;
         bar.innerHTML = `
           <img src="${p.avatar}" alt="dog avatar" />
           <div class="bar-info">
             <div class="bar-name">${p.dogname}</div>
             <div class="bar-time">${p.timeText}</div>
-            <div class="bar-fill ${medalClass}" style="width: ${width}%;"></div>
+            <div id="${barId}" class="bar-fill ${medalClass}"></div>
           </div>
         `;
         container.appendChild(bar);
+
+        setTimeout(() => {
+          document.getElementById(barId).style.width = `${width}%`;
+        }, 300);
       });
     }
 
@@ -146,9 +156,18 @@
       return `${min}m ${sec}s`;
     }
 
+    function launchConfetti() {
+      confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
+    }
+
     window.onload = () => {
       markCompleted();
       loadTop3();
+      launchConfetti();
     };
   </script>
 </head>
@@ -157,8 +176,9 @@
   <p>You're officially a Top Dog! Here's how the best sniffers ranked:</p>
 
   <div class="bar-container" id="top3">
-    <!-- Bar chart will be injected here -->
+    <!-- Animated leaderboard will appear here -->
   </div>
 </body>
 </html>
+
 
