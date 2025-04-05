@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Leaderboard - Dog Hunt</title>
+  <title>Top Dogs - Public Leaderboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
   <style>
     body {
@@ -113,7 +113,7 @@
           <div class="player-info">
             <img src="${player.avatar || 'avatars/default.png'}" alt="avatar" />
             <div>
-              <strong>${player.name}</strong><br>
+              <strong>${player.dogname || 'Doggo'}</strong><br>
               <div class="duration">${player.duration}</div>
             </div>
           </div>
@@ -129,9 +129,8 @@
   </script>
 </head>
 <body>
-  <h1>🏆 Top Doggos</h1>
+  <h1>🏆 The Top Doggos!</h1>
   <div id="leaderboard" class="leaderboard"></div>
 </body>
 </html>
-
 
