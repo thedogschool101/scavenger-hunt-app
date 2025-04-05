@@ -1,0 +1,27 @@
+   const snapshot = await db.collection("players")
+        .where("clue5_unlocked", "!=", null)
+        .orderBy("clue5_unlocked", "asc")
+        .limit(10)
+        .get();
+
+      if (snapshot.empty) {
+        container.innerHTML = "<p>No one has completed the hunt yet!</p>";
+        return;
+      }
+
+      snapshot.forEach((doc, index) => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.className = "player";
+        div.innerHTML = `
+          <span><span class="paw">🐾</span> ${data.name || 'Anonymous'}</span>
+          <span>${new Date(data.clue5_unlocked.toDate()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    loadLeaderboard();
+  </script>
+</body>
+</html>
