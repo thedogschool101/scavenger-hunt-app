@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign Up - Dog Hunt</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
   <style>
@@ -31,14 +31,10 @@
       display: block;
       margin: 1rem auto;
       padding: 0.7rem;
-      width: 80%;
+      width: 90%;
       border-radius: 6px;
       border: none;
       font-size: 1rem;
-    }
-    input[type="file"] {
-      padding: 0.3rem;
-      background-color: #eee;
     }
     button {
       background-color: #FFEB3B;
@@ -51,45 +47,12 @@
       cursor: pointer;
       margin-top: 1rem;
     }
-    #confirmation {
-      color: green;
-      font-weight: bold;
-      margin-top: 1rem;
-    }
   </style>
 
   <!-- Firebase Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
-</head>
-<body>
-  <h1>🐾 Join the Doggy Scavenger Hunt!</h1>
-  <form onsubmit="submitForm(event)">
-    <input type="text" id="name" placeholder="Your Name" required />
-    <input type="email" id="email" placeholder="Your Email" required />
-    <input type="text" id="breed" placeholder="Dog's Breed" required />
-    <input type="text" id="age" placeholder="Dog's Age" required />
-    <input type="text" id="phone" placeholder="Phone Number" required />
-    <input type="text" id="facebook" placeholder="Facebook Profile Name (or say 'None')" required />
-
-    <label for="avatarSelect">🐶 Choose a Dog Avatar (or upload below)</label>
-    <select id="avatarSelect">
-      <option value="">-- Select a Dog Avatar --</option>
-      <option value="🐶 Mutt">🐶 Mutt</option>
-      <option value="🐕 Lil Giant">🐕 Lil Giant</option>
-      <option value="🦴 Crazy Critter">🦴 Crazy Critter</option>
-      <option value="🐾 Sniffer Champ">🐾 Sniffer Champ</option>
-      <option value="💨 Zoomie Beast">💨 Zoomie Beast</option>
-      <option value="🎤 Howlin' Pal">🎤 Howlin' Pal</option>
-    </select>
-
-    <label for="avatarPhoto">📸 Or Upload a Dog Avatar Photo</label>
-    <input type="file" id="avatarPhoto" accept="image/*" />
-
-    <button type="submit">Start Hunt</button>
-    <p id="confirmation"></p>
-  </form>
 
   <script>
     const firebaseConfig = {
@@ -109,51 +72,77 @@
 
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const dogname = document.getElementById("dogname").value.trim();
       const breed = document.getElementById("breed").value.trim();
       const age = document.getElementById("age").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const facebook = document.getElementById("facebook").value.trim();
-      const avatarSelect = document.getElementById("avatarSelect").value;
-      const avatarFile = document.getElementById("avatarPhoto").files[0];
+      const avatarText = document.getElementById("avatarSelect").value;
+      const avatarPhotoFile = document.getElementById("avatarPhoto").files[0];
 
-      if (!name || !email || !breed || !age || !phone || !facebook) {
+      if (!name || !email || !dogname || !breed || !age) {
         alert("Please fill in all required fields.");
         return;
       }
 
-      let avatar = avatarSelect;
+      // Save basic info to localStorage for future pages
+      localStorage.setItem("userName", name);
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userPhone", phone);
+
+      let avatarURL = avatarText;
 
       try {
-        if (avatarFile) {
-          const storageRef = storage.ref(`avatars/${Date.now()}_${avatarFile.name}`);
-          const uploadTask = await storageRef.put(avatarFile);
-          avatar = await uploadTask.ref.getDownloadURL();
+        // If they uploaded a photo, store it in Firebase Storage
+        if (avatarPhotoFile) {
+          const photoRef = storage.ref(`avatars/${Date.now()}_${avatarPhotoFile.name}`);
+          const uploadTask = await photoRef.put(avatarPhotoFile);
+          avatarURL = await uploadTask.ref.getDownloadURL();
         }
 
         await db.collection("players").add({
           name,
           email,
+          phone,
+          dogname,
           breed,
           age,
-          phone,
-          facebook,
-          avatar,
-          timestamp: new Date()
+          avatar: avatarURL,
+          signup_time: new Date()
         });
 
-        localStorage.setItem("userName", name);
-        localStorage.setItem("userEmail", email);
-        localStorage.setItem("userPhone", phone);
-
-        document.getElementById("confirmation").innerText = "✅ You're signed up!";
         window.location.href = "clue1.html";
-
       } catch (error) {
-        console.error("Error saving player:", error);
+        console.error("Error saving data: ", error);
         alert("Something went wrong. Please try again.");
       }
     }
   </script>
+</head>
+<body>
+  <h1>🐾 Join the Doggy Scavenger Hunt!</h1>
+  <form onsubmit="submitForm(event)">
+    <input id="name" type="text" placeholder="Your Name" required />
+    <input id="email" type="email" placeholder="Your Email" required />
+    <input id="phone" type="text" placeholder="Phone Number (optional)" />
+    <input id="dogname" type="text" placeholder="Dog's Name" required />
+    <input id="breed" type="text" placeholder="Dog's Breed" required />
+    <input id="age" type="text" placeholder="Dog's Age" required />
+
+    <label for="avatarSelect">🐶 Choose a Dog Avatar (or upload your own)</label>
+    <select id="avatarSelect" name="avatarSelect">
+      <option value="">-- Select a Dog Avatar --</option>
+      <option value="🐶 Mutt">🐶 Mutt</option>
+      <option value="🐕 Lil Giant">🐕 Lil Giant</option>
+      <option value="🦴 Crazy Critter">🦴 Crazy Critter</option>
+      <option value="🐾 Sniffer Champ">🐾 Sniffer Champ</option>
+      <option value="💨 Zoomie Beast">💨 Zoomie Beast</option>
+      <option value="🎤 Howlin' Pal">🎤 Howlin' Pal</option>
+    </select>
+
+    <label for="avatarPhoto">📸 Or Upload a Dog Avatar Photo</label>
+    <input type="file" id="avatarPhoto" name="avatarPhoto" accept="image/*" style="margin-bottom: 1rem;" />
+
+    <button type="submit">Start Hunt</button>
+  </form>
 </body>
 </html>
-
