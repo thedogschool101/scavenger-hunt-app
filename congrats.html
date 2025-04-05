@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>Congratulations!</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     body {
@@ -80,100 +80,12 @@
       to { transform: scale(1); }
     }
   </style>
-
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDeTF1VT20rZEUz_46SqIWqcNAmFRyb-YA",
-      authDomain: "doghuntapp.firebaseapp.com",
-      projectId: "doghuntapp",
-      storageBucket: "doghuntapp.appspot.com",
-      messagingSenderId: "516842466897",
-      appId: "1:516842466897:web:78d992f9fad6c9d5ad1270"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    async function markCompleted() {
-      const name = localStorage.getItem("userName");
-      const email = localStorage.getItem("userEmail");
-
-      if (!name || !email) return;
-
-      try {
-        const snapshot = await db.collection("players")
-          .where("name", "==", name)
-          .where("email", "==", email)
-          .limit(1)
-          .get();
-
-        if (!snapshot.empty) {
-          const docRef = snapshot.docs[0].ref;
-          await docRef.update({ completed_time: new Date() });
-        }
-      } catch (error) {
-        console.error("Error saving completion time:", error);
-      }
-    }
-
-    async function loadTop3() {
-      const container = document.getElementById("top3");
-      const snapshot = await db.collection("players").get();
-
-      const players = snapshot.docs
-        .map(doc => ({ id: doc.id, ...doc.data() }))
-        .filter(p => p.completed_time && p.signup_time)
-        .map(p => {
-          const start = p.signup_time.toDate?.();
-          const end = p.completed_time.toDate?.();
-          const durationMs = end - start;
-          return {
-            avatar: p.avatar,
-            dogname: p.dogname,
-            duration: durationMs,
-            timeText: formatDuration(durationMs)
-          };
-        });
-
-      players.sort((a, b) => a.duration - b.duration);
-      const top3 = players.slice(0, 3);
-      const max = top3[2]?.duration || 1;
-
-      top3.forEach((p, index) => {
-        const bar = document.createElement("div");
-        bar.className = "bar";
-
-        const medal = index === 0 ? "🥇" :
-                      index === 1 ? "🥈" : "🥉";
-        const medalClass = index === 0 ? "gold" :
-                           index === 1 ? "silver" : "bronze";
-
-        const width = Math.max((1 - p.duration / max) * 100 + 10, 20);
-        const barId = `bar${index}`;
-
-        bar.innerHTML = `
-          <img src="${p.avatar}" alt="dog avatar" />
-          <div class="bar-info">
-            <div class="bar-name">${p.dogname}</div>
-            <div class="bar-time">${p.timeText}</div>
-            <div id="${barId}" class="bar-fill ${medalClass}"></div>
-          </div>
-          <div class="medal ${medalClass}-medal">${medal}</div>
-        `;
-        container.appendChild(bar);
-
-        setTimeout(() => {
-          document.getElementById(barId).style.width = \`\${width}%\`;
-        }, 300);
-      });
-    }
-
     function formatDuration(ms) {
       const secs = Math.floor(ms / 1000);
       const min = Math.floor(secs / 60);
       const sec = secs % 60;
-      return \`\${min}m \${sec}s\`;
+      return `${min}m ${sec}s`;
     }
 
     function launchConfetti() {
@@ -190,11 +102,61 @@
       audio.play();
     }
 
+    function loadTestLeaderboard() {
+      const container = document.getElementById("top3");
+      const top3 = [
+        {
+          dogname: "Zoomie Beast",
+          avatar: "avatars/zoomie-mcfluff.png",
+          duration: 190000
+        },
+        {
+          dogname: "Nap Ninja",
+          avatar: "avatars/nap-ninja.png",
+          duration: 240000
+        },
+        {
+          dogname: "Princess Chewbone",
+          avatar: "avatars/princess-chewbone.png",
+          duration: 300000
+        }
+      ];
+      const max = top3[2].duration;
+
+      top3.forEach((p, index) => {
+        const bar = document.createElement("div");
+        bar.className = "bar";
+
+        const medal = index === 0 ? "🥇" :
+                      index === 1 ? "🥈" : "🥉";
+        const medalClass = index === 0 ? "gold" :
+                           index === 1 ? "silver" : "bronze";
+
+        const width = Math.max((1 - p.duration / max) * 100 + 10, 20);
+        const barId = `bar${index}`;
+        const timeText = formatDuration(p.duration);
+
+        bar.innerHTML = `
+          <img src="${p.avatar}" alt="dog avatar" />
+          <div class="bar-info">
+            <div class="bar-name">${p.dogname}</div>
+            <div class="bar-time">${timeText}</div>
+            <div id="${barId}" class="bar-fill ${medalClass}"></div>
+          </div>
+          <div class="medal ${medalClass}-medal">${medal}</div>
+        `;
+        container.appendChild(bar);
+
+        setTimeout(() => {
+          document.getElementById(barId).style.width = `${width}%`;
+        }, 300);
+      });
+    }
+
     window.onload = () => {
-      markCompleted();
-      loadTop3();
       launchConfetti();
       playBark();
+      loadTestLeaderboard();
     };
   </script>
 </head>
@@ -203,7 +165,7 @@
   <p>You're officially a Top Dog! Here's how the best sniffers ranked:</p>
 
   <div class="bar-container" id="top3">
-    <!-- Animated leaderboard will appear here -->
+    <!-- Bars will load here -->
   </div>
 </body>
 </html>
