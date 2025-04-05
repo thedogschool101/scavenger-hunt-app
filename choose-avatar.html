@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Choose Your Pupsona</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #FFF3E0;
+      color: #4A148C;
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 2.5rem;
+      color: #FF6F00;
+      margin-bottom: 1rem;
+    }
+    .avatar-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin: 1.5rem auto;
+    }
+    .avatar-option {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .avatar-option:hover {
+      transform: scale(1.1);
+    }
+    .avatar-option.selected {
+      border-color: #FF6F00;
+    }
+    .upload-section {
+      margin: 1.5rem auto;
+    }
+    .upload-section input {
+      margin-top: 0.5rem;
+    }
+    button {
+      background-color: #FF6F00;
+      color: white;
+      font-size: 1.2rem;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 2rem;
+    }
+  </style>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDeTF1VT20rZEUz_46SqIWqcNAmFRyb-YA",
+      authDomain: "doghuntapp.firebaseapp.com",
+      projectId: "doghuntapp",
+      storageBucket: "doghuntapp.appspot.com",
+      messagingSenderId: "516842466897",
+      appId: "1:516842466897:web:78d992f9fad6c9d5ad1270"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    async function submitAvatarSelection() {
+      const name = localStorage.getItem("userName");
+      const email = localStorage.getItem("userEmail");
+      const phone = localStorage.getItem("userPhone");
+      const dogname = localStorage.getItem("dogname");
+      const breed = localStorage.getItem("breed");
+      const age = localStorage.getItem("age");
+      const avatarFile = document.getElementById("avatarPhoto").files[0];
+      const selectedAvatar = document.getElementById("avatarSelect").value;
+
+      if (!name || !email || !dogname || !breed || !age) {
+        alert("Missing sign-up info. Please start over.");
+        return;
+      }
+
+      let avatarURL = selectedAvatar;
+
+      try {
+        if (avatarFile) {
+          const ref = storage.ref(`avatars/${Date.now()}_${avatarFile.name}`);
+          const upload = await ref.put(avatarFile);
+          avatarURL = await upload.ref.getDownloadURL();
+        }
+
+        await db.collection("players").add({
+          name,
+          email,
+          phone,
+          dogname,
+          breed,
+          age,
+          avatar: avatarURL,
+          signup_time: new Date()
+        });
+
+        window.location.href = "clue1.html";
+      } catch (err) {
+        console.error("Upload error:", err);
+        alert("There was an error saving your avatar. Please try again.");
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll('.avatar-option').forEach(img => {
+        img.addEventListener('click', () => {
+          document.querySelectorAll('.avatar-option').forEach(i => i.classList.remove('selected'));
+          img.classList.add('selected');
+          document.getElementById("avatarSelect").value = img.dataset.avatar;
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+  <h1>🐶 Choose Your Pupsona!</h1>
+  <p>Select a cartoon dog avatar or upload a real pic of your furry teammate!</p>
+
+  <div class="avatar-grid">
+    <img src="avatars/nap-ninja.png" class="avatar-option" data-avatar="avatars/nap-ninja.png" alt="Nap Ninja" />
+    <img src="avatars/zoomie-mcfluff.png" class="avatar-option" data-avatar="avatars/zoomie-mcfluff.png" alt="Zoomie McFluff" />
+    <img src="avatars/princess-chewbone.png" class="avatar-option" data-avatar="avatars/princess-chewbone.png" alt="Princess Chewbone" />
+    <img src="avatars/barketing-manager.png" class="avatar-option" data-avatar="avatars/barketing-manager.png" alt="Barketing Manager" />
+    <img src="avatars/bellyrub-bandit.png" class="avatar-option" data-avatar="avatars/bellyrub-bandit.png" alt="Bellyrub Bandit" />
+  </div>
+
+  <input type="hidden" id="avatarSelect" />
+
+  <div class="upload-section">
+    <label for="avatarPhoto">📸 Or upload a photo of your pup:</label>
+    <input type="file" id="avatarPhoto" accept="image/*" />
+  </div>
+
+  <button onclick="submitAvatarSelection()">🐾 Start the Hunt!</button>
+</body>
+</html>
